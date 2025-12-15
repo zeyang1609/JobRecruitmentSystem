@@ -1,0 +1,64 @@
+﻿@model IEnumerable<JobRecruitmentSystem.Models.JobPost>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Manage Job Postings</h2>
+        <a asp-action="Create" class="btn btn-primary">+ Post New Job</a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    <table class="table table-hover shadow-sm">
+        <thead class="table-light">
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Closing Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">@item.JobTitle</td>
+                        <td>@item.JobCategory.Name</td>
+                        <td>
+                            @if (item.Status == "Active")
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else if (item.Status == "Draft")
+                            {
+
+                                <span class="badge bg-secondary">Draft</span>
+                            }
+                            else
+                            {
+
+                                <span class="badge bg-danger">Closed</span>
+                            }
+                        </td>
+                        <td>@item.ClosingDate.ToShortDateString()</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.JobPostId" class="btn btn-sm btn-outline-secondary">Edit</a>
+                            <form asp-action="Delete" asp-route-id="@item.JobPostId" method="post" style="display:inline;" onsubmit="return confirm('Delete this job?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="5" class="text-center text-muted">You haven't posted any jobs yet.</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

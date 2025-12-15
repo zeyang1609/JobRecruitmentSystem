@@ -1,0 +1,60 @@
+﻿@model JobRecruitmentSystem.ViewModels.JobSearchViewModel
+
+<div class="container mt-4">
+    <div class="text-center mb-5">
+        <h1>Find Your Dream Job</h1>
+        <p class="text-muted">Browse thousands of job openings from top companies.</p>
+    </div>
+
+    <div class="card p-4 shadow-sm mb-5 bg-light">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <input id="keyword" class="form-control" placeholder="Job title, keywords..." />
+            </div>
+            <div class="col-md-3">
+                <select id="categoryId" class="form-select" asp-items="Model.Categories">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input id="location" class="form-control" placeholder="Location..." />
+            </div>
+            <div class="col-md-2">
+                <button type="button" onclick="filterJobs()" class="btn btn-primary w-100">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="jobListContainer" class="row">
+        <partial name="_JobPostList" model="Model.Results" />
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // 2. The AJAX Function
+        function filterJobs() {
+            var keyword = document.getElementById("keyword").value;
+            var categoryId = document.getElementById("categoryId").value;
+            var loc = document.getElementById("location").value;
+
+            // Use jQuery (included by default in ASP.NET Core templates) to fetch data
+            $.ajax({
+                url: '@Url.Action("FilterJobs", "JobListing")',
+                type: 'GET',
+                data: {
+                    keyword: keyword,
+                    categoryId: categoryId,
+                    location: loc
+                },
+                success: function (result) {
+                    // 3. Inject the HTML result into the container
+                    $("#jobListContainer").html(result);
+                },
+                error: function () {
+                    alert("Error loading jobs.");
+                }
+            });
+        }
+    </script>
+}

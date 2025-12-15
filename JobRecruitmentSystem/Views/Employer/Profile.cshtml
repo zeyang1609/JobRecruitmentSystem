@@ -1,0 +1,68 @@
+﻿@model JobRecruitmentSystem.Models.Employer
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h3>Manage Company Profile</h3>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success">@TempData["Success"]</div>
+                    }
+
+                    <form asp-action="Profile" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="EmployerId" />
+                        <input type="hidden" asp-for="UserId" />
+                        <input type="hidden" asp-for="LogoPath" />
+
+                        <div class="row mb-3">
+                            <div class="col-md-4 text-center">
+                                <div class="mb-2">
+                                    @if (!string.IsNullOrEmpty(Model.LogoPath))
+                                    {
+                                        <img src="@Model.LogoPath" class="img-thumbnail rounded-circle" style="width: 150px; height: 150px; object-fit: cover;" alt="Company Logo" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-light d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width: 150px; height: 150px;">
+                                            <span class="text-muted">No Logo</span>
+                                        </div>
+                                    }
+                                </div>
+                                <label class="form-label text-sm-center">Upload Logo</label>
+                                <input type="file" name="logoFile" class="form-control form-control-sm" accept="image/*" />
+                            </div>
+
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label asp-for="CompanyName" class="form-label">Company Name</label>
+                                    <input asp-for="CompanyName" class="form-control" placeholder="e.g. Tech Solutions Sdn Bhd" />
+                                    <span asp-validation-for="CompanyName" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="WebsiteUrl" class="form-label">Website URL</label>
+                                    <input asp-for="WebsiteUrl" class="form-control" placeholder="https://..." />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Location" class="form-label">Office Location (City/State)</label>
+                            <input asp-for="Location" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CompanyDescription" class="form-label">About the Company</label>
+                            <textarea asp-for="CompanyDescription" class="form-control" rows="5" placeholder="Describe your company culture, mission, etc."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

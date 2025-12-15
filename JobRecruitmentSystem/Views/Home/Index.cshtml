@@ -1,0 +1,110 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center mb-5">
+    <h1 class="display-4 fw-bold">Welcome to JobRecruit</h1>
+    <p class="lead text-muted">Connecting Talent with Opportunity.</p>
+</div>
+
+@if (!User.Identity.IsAuthenticated)
+{
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-5 bg-light">
+                    <h3>Find your next career move</h3>
+                    <p>Join thousands of job seekers and top employers today.</p>
+                    <div class="mt-4">
+                        <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg me-2">Get Started</a>
+                        <a asp-controller="Account" asp-action="Login" class="btn btn-outline-secondary btn-lg">Login</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-md-4">
+                    <div class="p-3">
+                        <h5>For Job Seekers</h5>
+                        <p>Build your profile, upload resumes, and apply with one click.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3">
+                        <h5>For Employers</h5>
+                        <p>Post jobs, manage applicants, and schedule interviews efficiently.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3">
+                        <h5>Safe & Secure</h5>
+                        <p>Verified profiles and secure communication channels.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container">
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="alert alert-warning border-warning">
+                <h4><i class="bi bi-shield-lock"></i> Admin Panel</h4>
+                <p>You have full access to manage the system.</p>
+                <hr />
+                <div class="d-flex gap-3">
+                    <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-dark">
+                        Go to Admin Dashboard
+                    </a>
+                    <a asp-controller="Admin" asp-action="Categories" class="btn btn-dark">Manage Job Categories </a>
+                </div>
+            </div>
+        }
+
+        @if (User.IsInRole("Employer"))
+        {
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <div class="card border-primary h-100">
+                        <div class="card-body">
+                            <h3 class="card-title text-primary">Employer Dashboard</h3>
+                            <p class="card-text">Manage your company profile and job postings.</p>
+
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a href="#" class="btn btn-primary">Post a New Job</a>
+                                <a href="#" class="btn btn-outline-primary">My Job Posts</a>
+                                <a href="#" class="btn btn-outline-primary">Company Profile</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (User.IsInRole("JobSeeker"))
+        {
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card border-success h-100">
+                        <div class="card-body">
+                            <h3 class="card-title text-success">Find Jobs</h3>
+                            <p>Search and apply for the latest vacancies.</p>
+                            <a href="#" class="btn btn-success">Search Jobs</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h3 class="card-title">My Career Profile</h3>
+                            <p>Update your resume and skills to attract employers.</p>
+                            <a href="#" class="btn btn-outline-success">Edit Profile</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

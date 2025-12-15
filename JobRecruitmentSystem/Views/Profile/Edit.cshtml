@@ -1,0 +1,66 @@
+﻿@model JobRecruitmentSystem.Models.JobSeeker
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3>My Profile</h3>
+                </div>
+                <div class="card-body">
+                    @if (TempData["Success"] != null)
+                    {
+                        <div class="alert alert-success">@TempData["Success"]</div>
+                    }
+
+                    <form asp-action="Edit" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="JobSeekerId" />
+                        <input type="hidden" asp-for="UserId" />
+                        <input type="hidden" asp-for="ResumeFilePath" />
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FullName" class="form-label">Full Name</label>
+                                <input asp-for="FullName" class="form-control" />
+                                <span asp-validation-for="FullName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                                <input asp-for="PhoneNumber" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Address" class="form-label">Address</label>
+                            <textarea asp-for="Address" class="form-control" rows="2"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Skills" class="form-label">Skills (comma separated)</label>
+                            <input asp-for="Skills" class="form-control" placeholder="e.g. C#, SQL, HTML" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Experience" class="form-label">Work Experience</label>
+                            <textarea asp-for="Experience" class="form-control" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Resume Upload (PDF/Word)</label>
+                            <input type="file" name="resumeFile" class="form-control" />
+                            @if (!string.IsNullOrEmpty(Model.ResumeFilePath))
+                            {
+                                <div class="mt-2">
+                                    <span class="text-success">Current Resume:</span>
+                                    <a href="@Model.ResumeFilePath" target="_blank">Download</a>
+                                </div>
+                            }
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Save Profile</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

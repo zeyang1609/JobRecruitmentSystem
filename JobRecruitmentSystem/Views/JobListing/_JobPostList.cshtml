@@ -1,0 +1,45 @@
+﻿@model IEnumerable<JobRecruitmentSystem.Models.JobPost>
+
+@if (Model.Any())
+{
+    foreach (var job in Model)
+    {
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="card-title text-primary">@job.JobTitle</h5>
+                        <span class="badge bg-info text-dark">@job.EmploymentType</span>
+                    </div>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        @if (job.Employer != null)
+                        {
+                            @job.Employer.CompanyName
+                        }
+                        else
+                        {
+
+                            <text>Company Confidential</text>
+                        }
+                    </h6>
+
+                    <p class="card-text text-truncate">@job.JobDescription.Substring(0, Math.Min(100, job.JobDescription.Length))...</p>
+
+                    <ul class="list-unstyled text-small text-muted">
+                        <li><i class="bi bi-geo-alt"></i> @job.JobLocation</li>
+                        <li><i class="bi bi-cash"></i> RM @job.Salary.ToString("N0")</li>
+                        <li><i class="bi bi-clock"></i> Posted @job.PostedDate.ToShortDateString()</li>
+                    </ul>
+
+                    <a asp-action="Details" asp-route-id="@job.JobPostId" class="btn btn-outline-primary w-100 mt-2">View Details</a>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="col-12 text-center py-5">
+        <h3>No jobs found matching your criteria.</h3>
+    </div>
+}
