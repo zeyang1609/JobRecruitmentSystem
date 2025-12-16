@@ -1,76 +1,71 @@
 ﻿@model IEnumerable<JobRecruitmentSystem.Models.User>
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
 
-<div class="container mt-4">
+<div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Admin Dashboard</h2>
+        <h2 class="text-secondary">User Management</h2>
 
-        <form asp-action="Dashboard" method="get" class="d-flex">
-            <input type="text" name="searchString" class="form-control me-2" placeholder="Search user..." />
-            <button type="submit" class="btn btn-outline-primary">Search</button>
-        </form>
-        <a asp-action="Categories" class="btn btn-outline-dark ms-2">Manage Categories</a>
+        <div class="d-flex gap-2">
+            <select id="roleFilter" class="form-select w-auto">
+                <option value="All">All Roles</option>
+                <option value="Admin">Admin</option>
+                <option value="Employer">Employer</option>
+                <option value="JobSeeker">JobSeeker</option>
+            </select>
+
+            <input type="text" id="searchInput" class="form-control" placeholder="Type to search..." style="width: 250px;">
+        </div>
     </div>
 
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">@TempData["Success"]</div>
-    }
-
-    <table class="table table-striped table-hover shadow-sm">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.UserId</td>
-                    <td>@item.Username</td>
-                    <td>@item.Email</td>
-                    <td>
-                        <span class="badge bg-info text-dark">@item.Role</span>
-                    </td>
-                    <td>
-                        @if (item.IsActive)
-                        {
-                            <span class="badge bg-success">Active</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-danger">Blocked</span>
-                        }
-                    </td>
-                    <td>
-                        <div class="d-flex gap-2">
-                            <a asp-action="Edit" asp-route-id="@item.UserId" class="btn btn-sm btn-warning">Edit</a>
-
-                            <form asp-action="ToggleStatus" asp-route-id="@item.UserId" method="post" style="display:inline;">
-                                @if (item.IsActive)
-                                {
-                                    <button type="submit" class="btn btn-sm btn-danger"
-                                            onclick="return confirm('Are you sure you want to BLOCK this user?');">
-                                        Block
-                                    </button>
-                                }
-                                else
-                                {
-                                    <button type="submit" class="btn btn-sm btn-success"
-                                            onclick="return confirm('Are you sure you want to UNBLOCK this user?');">
-                                        Unblock
-                                    </button>
-                                }
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div id="tableContainer">
+        <partial name="_UserTable" model="Model" />
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Function to fetch data
+            function loadData(sortOrder = "") {
+                var searchValue = $("#searchInput").val();
+                var roleValue = $("#roleFilter").val();
+
+                $.ajax({
+                    url: '@Url.Action("Dashboard", "Admin")',
+                    type: 'GET',
+                    data: {
+                        searchString: searchValue,
+                        filterRole: roleValue,
+                        sortOrder: sortOrder
+                    },
+                    success: function (result) {
+                        $("#tableContainer").html(result);
+                    }
+                });
+            }
+
+            // 1. Real-Time Search with "Debounce" (Wait 500ms after typing stops)
+            let timeout = null;
+            $("#searchInput").on('input', function () {
+                clearTimeout(timeout);
+                timeout = setTimeout(function () {
+                    loadData();
+                }, 500);
+            });
+
+            // 2. Filter Dropdown Change
+            $("#roleFilter").change(function () {
+                loadData();
+            });
+
+            // 3. Sorting Clicks (Delegate event because table refreshes)
+            $(document).on("click", ".sort-link", function (e) {
+                e.preventDefault();
+                var sortValue = $(this).data("sort");
+                loadData(sortValue);
+            });
+        });
+    </script>
+}

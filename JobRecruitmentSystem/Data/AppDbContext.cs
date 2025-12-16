@@ -16,6 +16,7 @@ namespace JobRecruitmentSystem.Data
         public DbSet<Employer> Employers { get; set; }
         public DbSet<JobCategory> JobCategories { get; set; }
         public DbSet<JobPost> JobPosts { get; set; }
+        public DbSet<CompanyPhoto> CompanyPhotos { get; set; }
         // public DbSet<Application> Applications { get; set; }
     }
 }

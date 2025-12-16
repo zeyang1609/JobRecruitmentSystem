@@ -78,5 +78,81 @@ namespace JobRecruitmentSystem.Controllers
 
             return View(model);
         }
+
+        // --- COMPANY PHOTOS MANAGEMENT ---
+
+        [HttpPost]
+        public async Task<IActionResult> UploadPhotos(List<IFormFile> photos)
+        {
+            var userId = int.Parse(User.FindFirst("UserId").Value);
+            var employer = _context.Employers.FirstOrDefault(e => e.UserId == userId);
+
+            if (employer != null && photos != null)
+            {
+                foreach (var file in photos)
+                {
+                    if (file.Length > 0)
+                    {
+                        // Save file logic (similar to your Logo logic)
+                        string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                        string path = Path.Combine(_webHostEnvironment.WebRootPath, "company_photos", fileName);
+
+                        // Ensure directory exists
+                        Directory.CreateDirectory(Path.GetDirectoryName(path));
+
+                        using (var stream = new FileStream(path, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        // Save to DB
+                        var photo = new CompanyPhoto
+                        {
+                            EmployerId = employer.EmployerId,
+                            FilePath = "/company_photos/" + fileName
+                        };
+                        _context.CompanyPhotos.Add(photo);
+                    }
+                }
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("Profile");
+        }
+
+        // --- STAFF MANAGEMENT (Sub-Users) ---
+
+        // GET: Employer/ManageStaff
+        public IActionResult ManageStaff()
+        {
+            var userId = int.Parse(User.FindFirst("UserId").Value);
+            // Find the current employer ID
+            var employer = _context.Employers.FirstOrDefault(e => e.UserId == userId);
+
+            if (employer == null) return RedirectToAction("Profile");
+
+            // Get all users linked to this Employer
+            var staff = _context.Users.Where(u => u.EmployerId == employer.EmployerId).ToList();
+            return View(staff);
+        }
+
+        // POST: Employer/CreateStaff
+        [HttpPost]
+        public IActionResult CreateStaff(User newStaff)
+        {
+            var userId = int.Parse(User.FindFirst("UserId").Value);
+            var employer = _context.Employers.FirstOrDefault(e => e.UserId == userId);
+
+            if (employer != null && ModelState.IsValid)
+            {
+                // Link new user to this company
+                newStaff.EmployerId = employer.EmployerId;
+                newStaff.Role = "Employer"; // Or specific role like "HiringManager"
+                newStaff.PasswordHash = "12345"; // simplified; use your PasswordHasher here
+
+                _context.Users.Add(newStaff);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("ManageStaff");
+        }
     }
 }

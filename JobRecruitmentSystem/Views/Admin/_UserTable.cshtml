@@ -1,0 +1,83 @@
+﻿@model IEnumerable<JobRecruitmentSystem.Models.User>
+
+<table class="table table-hover align-middle">
+    <thead class="table-light text-dark">
+        <tr>
+            <th>ID</th>
+
+            <th>
+                <a href="#" class="text-dark text-decoration-none sort-link" data-sort="name_desc">
+                    Username
+                    @if (ViewData["CurrentSort"]?.ToString() == "name_desc")
+                    {
+                        <span>&#9660;</span>
+                    }
+                    else
+                    {
+
+                        <span>&#9650;</span>
+                    }
+                </a>
+            </th>
+            <th>Email</th>
+            <th>
+                <a href="#" class="text-dark text-decoration-none sort-link" data-sort="Role">
+                    Role
+                    @if (ViewData["CurrentSort"]?.ToString() == "Role")
+                    {
+                        <span>&#9650;</span>
+                    }
+                    else
+                    {
+
+                        <span>&#9660;</span>
+                    }
+                </a>
+            </th>
+            <th>
+                <a href="#" class="text-dark text-decoration-none sort-link" data-sort="Date">
+                    Created At
+                    @if (ViewData["CurrentSort"]?.ToString() == "Date")
+                    {
+                        <span>&#9650;</span>
+                    }
+                    else
+                    {
+
+                        <span>&#9660;</span>
+                    }
+                </a>
+            </th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.UserId</td>
+                <td class="fw-bold">@user.Username</td>
+                <td>@user.Email</td>
+                <td><span class="badge bg-secondary">@user.Role</span></td>
+                <td>@user.CreatedAt.ToShortDateString()</td>
+                <td>
+                    @if (user.IsActive)
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Blocked</span>
+                    }
+                </td>
+                <td>
+                    <a href="/Admin/Edit/@user.UserId" class="btn btn-sm btn-outline-primary">Edit</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div id="pagination-container">
+</div>

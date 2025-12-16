@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+
 namespace JobRecruitmentSystem.Models
 {
     public class User
@@ -34,5 +35,12 @@ namespace JobRecruitmentSystem.Models
 
         // Audit fields
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public int? EmployerId { get; set; }
+
+        [ForeignKey("EmployerId")]
+        public virtual Employer Employer { get; set; }
     }
 }
+
+

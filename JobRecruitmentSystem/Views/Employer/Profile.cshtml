@@ -13,10 +13,12 @@
                         <div class="alert alert-success">@TempData["Success"]</div>
                     }
 
-                    <form asp-action="Profile" enctype="multipart/form-data">
+                    <form asp-action="Profile" method="post" enctype="multipart/form-data">
                         <input type="hidden" asp-for="EmployerId" />
                         <input type="hidden" asp-for="UserId" />
                         <input type="hidden" asp-for="LogoPath" />
+
+                     
 
                         <div class="row mb-3">
                             <div class="col-md-4 text-center">

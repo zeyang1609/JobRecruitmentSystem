@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using JobRecruitmentSystem.Data;
+﻿using JobRecruitmentSystem.Data;
 using JobRecruitmentSystem.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace JobRecruitmentSystem.Controllers
@@ -18,21 +19,45 @@ namespace JobRecruitmentSystem.Controllers
         }
 
         // GET: Admin/Dashboard
-        // 2. View All Users with optional Search
-        public IActionResult Dashboard(string searchString)
+        public async Task<IActionResult> Dashboard(string searchString, string sortOrder, string filterRole, int pageNumber = 1)
         {
-            var users = from u in _context.Users
-                        select u;
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["CurrentFilter"] = searchString;
+            ViewData["CurrentRole"] = filterRole; // New Filter
 
+            var users = from u in _context.Users select u;
+
+            // 1. Filter Logic (Search Box)
             if (!string.IsNullOrEmpty(searchString))
             {
-                // Simple search by Username or Email
-                users = users.Where(s => s.Username.Contains(searchString)
-                                      || s.Email.Contains(searchString));
+                users = users.Where(s => s.Username.Contains(searchString) || s.Email.Contains(searchString));
             }
 
-            // Return the list to the View
-            return View(users.ToList());
+            // 2. Dropdown Filter Logic (New Requirement)
+            if (!string.IsNullOrEmpty(filterRole) && filterRole != "All")
+            {
+                users = users.Where(u => u.Role == filterRole);
+            }
+
+            // 3. Sorting Logic
+            switch (sortOrder)
+            {
+                case "name_desc": users = users.OrderByDescending(s => s.Username); break;
+                case "Date": users = users.OrderBy(s => s.CreatedAt); break;
+                case "Role": users = users.OrderBy(s => s.Role); break;
+                default: users = users.OrderBy(s => s.Username); break;
+            }
+
+            // Paging (Simulated for real-time feel)
+            var pagedUsers = await users.Take(50).ToListAsync(); // Limit to 50 for speed
+
+            // CRITICAL: Check if this is an AJAX request
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_UserTable", pagedUsers);
+            }
+
+            return View(pagedUsers);
         }
 
         // POST: Admin/ToggleStatus
